@@ -1,0 +1,40 @@
+NAME
+    Module::Package - Postmodern Perl Module Packaging
+
+SYNOPSIS
+    In you "Makefile.PL":
+
+        use inc::Package;
+
+DESCRIPTION
+    This module is a dropin replacement for Module::Install. It does
+    everything Module::Install does, but just a bit better.
+
+    Now that you've heard the sell, here's the simple truth. Module::Package
+    is an exteremely tiny wrapper around Module::Install. All it does is
+    load Module::Install and call the "pkg" directive. This in turn, loads
+    Module::Install::Package.
+
+    But that's where the magic begins. Module::Install::Package attempts to
+    fix most of the problems of Module::Install, in one go.
+
+MORE DOCUMENTATION
+    Coming soon...
+
+FUN FACT
+    This module uses itself to package itself. Take a look!
+
+STATUS
+    This is a early, "proving concepts", release. Keep out.
+
+AUTHOR
+    Ingy döt Net <ingy@cpan.org>
+
+COPYRIGHT AND LICENSE
+    Copyright (c) 2011. Ingy döt Net.
+
+    This program is free software; you can redistribute it and/or modify it
+    under the same terms as Perl itself.
+
+    See http://www.perl.com/perl/misc/Artistic.html
+

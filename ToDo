@@ -1,0 +1,6 @@
+== To Do
+- Tell CPAN to reindex Module::Install::Package
+- Use pkg/conf.yaml
+- Move package-pkg/perl package-pkg/perl/package
+- make $main::POD overloaded variable
+- Test on Strawberry Perl

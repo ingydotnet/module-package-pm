@@ -1,0 +1,7 @@
+---
+version: 0.11
+date:    Wed May 18 14:09:55 EST 2011
+changes:
+- First Release
+- This module is the rename/replacement for Package/inc::Package.
+- Package was at 0.10 at the switch, so starting with 0.11.
