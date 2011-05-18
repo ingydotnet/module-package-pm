@@ -21,8 +21,12 @@ DESCRIPTION
 MORE DOCUMENTATION
     Coming soon...
 
-FUN FACT
+FUN FACTS
     This module uses itself to package itself. Take a look!
+
+    "lexicals.pm" was shipped to CPAN using Module::Package before
+    Module::Package was released. Even if Module::Package had never been
+    released, lexicals.pm would still work.
 
 STATUS
     This is a early, "proving concepts", release. Keep out.

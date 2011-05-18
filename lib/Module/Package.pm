@@ -44,9 +44,13 @@ most of the problems of Module::Install, in one go.
 
 Coming soon...
 
-=head1 FUN FACT
+=head1 FUN FACTS
 
 This module uses itself to package itself. Take a look!
+
+C<lexicals.pm> was shipped to CPAN using Module::Package before
+Module::Package was released. Even if Module::Package had never been released,
+lexicals.pm would still work.
 
 =head1 STATUS
 
