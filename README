@@ -2,34 +2,102 @@ NAME
     Module::Package - Postmodern Perl Module Packaging
 
 SYNOPSIS
-    In you "Makefile.PL":
+    In your "Makefile.PL":
 
-        use inc::Package;
+        use inc::Module::Package;
+
+    or one of these invocations:
+
+        # These two are functionally the same as above:
+        use inc::Module::Package ':basic';
+        use inc::Module::Package 'Plugin:basic';
+
+        # With Module::Package::Catalyst plugin options
+        use inc::Module::Package 'Catalyst';
+
+        # With Module::Package::Catalyst::common inline plugin class
+        use inc::Module::Package 'Catalyst:common';
+
+        # Pass options to the Module::Package::Ingy::special constructor
+        use inc::Module::Package 'Ingy:special',
+            option1 => 'value1',
+            option2 => 'value2';
 
 DESCRIPTION
     This module is a dropin replacement for Module::Install. It does
     everything Module::Install does, but just a bit better.
 
-    Now that you've heard the sell, here's the simple truth. Module::Package
-    is an exteremely tiny wrapper around Module::Install. All it does is
-    load Module::Install and call the "pkg" directive. This in turn, loads
-    Module::Install::Package.
+    Actually this module is simply a wrapper around Module::Install. It
+    attempts to drastically reduce what goes in a Makefile.PL, while at the
+    same time, fixing many of the problems that people have had with
+    Module::Install (and other module frameworks) over the years.
 
-    But that's where the magic begins. Module::Install::Package attempts to
-    fix most of the problems of Module::Install, in one go.
+FEATURES
+    Module::Package has many advantages over vanilla Module::Install.
 
-MORE DOCUMENTATION
-    Coming soon...
+  Smaller Makefile.PL Files
+    In the majority of cases you can reduce your Makefile.PL to a single
+    command. The core Module::Package invokes the Module::Install plugins
+    that it thinks you want. You can also name the Module::Package plugin
+    that does exactly the plugins you want.
 
-FUN FACTS
-    This module uses itself to package itself. Take a look!
+  Reduces Module::Install Bloat
+    Somewhere Module::Install development went awry, and allowed modules
+    that only have useful code for an author, to be bundled into a
+    distribution. Over time, this has created a lot of wasted space on CPAN
+    mirrors. Module::Package fixes this.
 
-    "lexicals.pm" was shipped to CPAN using Module::Package before
-    Module::Package was released. Even if Module::Package had never been
-    released, lexicals.pm would still work.
+  Collaborator Plugin Discovery
+    An increasing problem with Module::Install is that when people check out
+    your module source from a repository, they don't know which
+    Module::Install plugin modules you have used. That's because the
+    Makefile.PL only requires the function names, not the module names that
+    they come from.
+
+    Many people have realized this problem, and worked around it in various
+    unfortunate ways. Module::Package manages this problem for you.
+
+  Feature Grouping and Reuse
+    Module::Install has lots of plugins. Although it is possible with plain
+    Module::Install, nobody seems to make plugins that group other plugins.
+    This also might introduce subtle problems of using groups with other
+    groups.
+
+    Module::Package has object oriented plugins whose main purpose is to
+    create these groups.
+
+USAGE
+    The basic anatomy of a Makefile.PL call to Module::Package is:
+
+        use inc::Module::Package PluginName:flavor %options;
+
+    The "inc::Module::Package" part uses the Module::Install "inc"
+    bootstrapping trick.
+
+    "PluginName:flavor" (note the single ':') resolves to the inline class
+    "Module::Package::PluginName::flavor", within the module
+    "Module::Package::PluginName". Module::Package::PluginName::flavor must
+    be a subclass of Module::Package::Plugin.
+
+    %options means whatever follows on the command. These values are passed
+    directly to the constructor of Module::Package::PluginName::flavor.
+
+    If ":flavor" is omitted, the class Module::Package::PluginName is used.
+    The idea is that you can create a single module with many different
+    plugin styles.
+
+    If "PluginName" is omitted, then ":flavor" is used against
+    Module::Package::Plugin. These are a set of common plugin classes that
+    you can use.
+
+    If "PluginName:flavor" is omitted altogether, it is the same as saying
+    'Plugin:basic'. Note that the constructor of
+    Module::Package::Plugin::basic takes no arguments.
 
 STATUS
-    This is a early, "proving concepts", release. Keep out.
+    This is still an early release. You should probably avoid it for now.
+    That said, quite a few modules are using this in the wild. Caveat
+    author.
 
 AUTHOR
     Ingy döt Net <ingy@cpan.org>
