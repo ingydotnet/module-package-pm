@@ -96,10 +96,10 @@ sub write_deps_list {
     $text .= join '', map {
         my $version = ${"${_}::VERSION"} || '';
         if ($version) {
-            "package_author_requires '$_' => '$version';" . $/;
+            "author_requires '$_' => '$version';" . $/;
         }
         else {
-            "package_author_requires '$_';" . $/;
+            "author_requires '$_';" . $/;
         }
     } grep {
         not m!^Module::(Package|Install)$! and
