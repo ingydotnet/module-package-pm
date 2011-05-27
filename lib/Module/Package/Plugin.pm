@@ -102,6 +102,7 @@ sub write_deps_list {
             warn "Updating $deps_list_file\n";
             io($deps_list_file)->print($text);
         }
+        $text = '';
     }
     if (
         -e 'Makefile.PL' and
@@ -125,10 +126,10 @@ sub write_deps_list {
         }
     }
     elsif ($text) {
-        warn <<'...';
+        warn <<"...";
 Note: Can't find a place to write deps list, and deps_list option is true.
-      touch pkg/deps_list or add __END__ to Makefile.PL.
-      See 'deps_list' in Module::Package documentation.
+      touch $deps_list_file or add __END__ to Makefile.PL.
+      See 'deps_list' in Module::Package::Plugin documentation.
 ...
     }
 }
@@ -213,7 +214,6 @@ sub manifest_skip {
     # Author-side only.
     # Consider $AUTHOR_ONLY globals...
     io('MANIFEST.SKIP')->append(<<'...');
-        print MS <<'...';
 ^pkg/
 ^inc/Module/Install/AckXXX.pm$
 ^inc/Module/Install/AuthorRequires.pm$

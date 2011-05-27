@@ -43,6 +43,9 @@ my $default_options = {
 # plugin directive:
 my $module_install_plugin;
 my $module_package_plugin;
+# XXX This @argv thing is a temporary fix for an ugly bug somewhere in the
+# Wikitext module usage.
+my @argv;
 sub module_package_internals_init {
     my $self = $module_install_plugin = shift;
     my ($plugin_spec, %options) = @_;
@@ -56,9 +59,6 @@ sub module_package_internals_init {
     # NOTE - This is the point in time where the body of Makefile.PL runs...
     return;
 
-    # XXX This @argv thing is a temporary fix for an ugly bug somewhere in the
-    # Wikitext module usage.
-    my @argv;
     sub INIT {
         return unless $module_install_plugin;
         return if $Module::Package::ERROR;

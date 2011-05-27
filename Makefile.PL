@@ -1,10 +1,10 @@
 use inc::Module::Package 0.12 'Ingy:modern 0.01';
 
-BEGIN {
-    perl_version_from 'lib/Module/Package/Plugin.pm';
-}
-
+# The default module 'lib/Module/Package.pm' has to be very strict
+# and minimal, so get much of the package info from here:
+perl_version_from 'lib/Module/Package/Plugin.pm';
 requires_from 'lib/Module/Package/Plugin.pm';
+
 
 __END__
 
@@ -12,7 +12,7 @@ __END__
 author_requires 'Module::Package' => '0.12';
 
 author_requires 'Module::Package::Ingy' => '0.01';
-author_requires 'Module::Install::AckXXX' => '0.11';
+author_requires 'Module::Install::AckXXX' => '0.12';
 author_requires 'Module::Install::ReadmeFromPod' => '0.12';
 author_requires 'Module::Install::Stardoc' => '0.13';
 author_requires 'Module::Install::VersionCheck' => '0.11';

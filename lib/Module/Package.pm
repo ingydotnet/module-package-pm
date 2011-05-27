@@ -11,9 +11,9 @@ use strict;
 
 $Module::Package::VERSION = '0.12';
 
-use inc::Module::Install 1.01 ();
-
 sub import {
+    eval "use inc::Module::Install 1.01 (); 1" or die $@;
+
     my $class = shift;
     package main;
     inc::Module::Install->import();
