@@ -3,6 +3,9 @@
 + Use Makefile.PL __END__ for deps
   + use 'author_requires' for deps
 
+- META.yml picks up 5.005 instead of 5.008003
+  - fix all_from etc
+
 
 - Move package-pkg/perl package-pkg/perl/package
 - make $main::POD overloaded variable

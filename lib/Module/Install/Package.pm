@@ -52,18 +52,39 @@ sub module_package_internals_init {
         $module_package_plugin = $self->_load_plugin($plugin_spec);
         $module_package_plugin->_version_check($VERSION);
         $module_package_plugin->mi($module_install_plugin);
+    }
+    # NOTE - This is the point in time where the body of Makefile.PL runs...
+    return;
 
-        $module_package_plugin->initial;
-        $module_package_plugin->main;
+    # XXX This @argv thing is a temporary fix for an ugly bug somewhere in the
+    # Wikitext module usage.
+    my @argv;
+    sub INIT {
+        return unless $module_install_plugin;
+        return if $Module::Package::ERROR;
+        eval {
+            if ($module_install_plugin->is_admin) {
+                $module_package_plugin->initial;
+                $module_package_plugin->main;
+            }
+            else {
+                $module_install_plugin->_initial();
+                $module_install_plugin->_main();
+            }
+        };
+        if ($@) {
+            $Module::Package::ERROR = $@;
+            die $@;
+        }
+        @argv = @ARGV; # XXX
     }
-    else {
-        $module_install_plugin->_initial();
-        $module_install_plugin->_main();
-    }
+
     # If this Module::Install plugin was used (by Module::Package) then wrap
     # up any loose ends. This will get called after Makefile.PL has completed.
     sub END {
+        @ARGV = @argv; # XXX
         return unless $module_install_plugin;
+        return if $Module::Package::ERROR;
         $module_package_plugin
             ? $module_package_plugin->final
             : $module_install_plugin->_final;
@@ -83,14 +104,6 @@ If you are the author of this module, try upgrading Module::Package.
 Otherwise, please notify the author of this error.
 
 ...
-}
-
-sub package_author_requires {
-    my ($self, $module, $version) = @_;
-    return unless $self->is_admin;
-
-    eval "require $module; 1"
-        or warn "Warning: As a Package Author, you need to install '$module'\n";
 }
 
 # Find and load the author side plugin:
@@ -121,10 +134,13 @@ sub _main {
     my ($self) = @_;
 }
 
+# TODO Need to review this critical part. Make sure it is in parity with every
+# author side run!
 sub _final {
     my ($self) = @_;
     $self->all_from($main::PM)
         unless $self->name;
+    $self->requires_from($main::PM);
     $self->_install_bin;
     $self->WriteAll;
 }
