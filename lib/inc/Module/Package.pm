@@ -1,16 +1,18 @@
 ##
-# name:      inc::Package
-# abstract:  inc::Module::Install on Kool-aid. Oh Yeah!
+# name:      inc::Module::Package
+# abstract:  Module::Package Bootstrapper
 # author:    Ingy döt Net <ingy@ingy.net>
 # license:   perl
 # copyright: 2011
 
 package inc::Module::Package;
-$VERSION = '0.11';
 
 BEGIN {
+    $VERSION = '0.12';
     package main;
-    use Module::Package();
+    use Module::Package 0.12 ();
+    die "Module::Package Bootstrapping Error"
+        unless $Module::Package::VERSION eq $inc::Module::Package::VERSION;
 }
 
 sub import {
@@ -28,8 +30,8 @@ In you C<Makefile.PL>:
 
 =head1 DESCRIPTION
 
-This is the inc::Module::Package bootstrapping module.  It works something
-like inc::Module::Install.  This bootstrap module should only be loaded in an
+This is the L<Module::Package> bootstrapping module.  It works something like
+L<inc::Module::Install>.  This bootstrap module should only be loaded in an
 author environment.
 
 See L<Module::Package> for more information.

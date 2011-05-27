@@ -150,18 +150,20 @@ they will operate.
 
 The basic anatomy of a Makefile.PL call to Module::Package is:
 
-    use inc::Module::Package PluginName:flavor %options;
+    use inc::Module::Package <version> 'PluginName:flavor <version>',
+        $option1 => $value1;
 
 The C<inc::Module::Package> part uses the Module::Install C<inc> bootstrapping
-trick.
+trick. An optional version can be used for both Module::Package and the
+Plugin. 
 
 C<PluginName:flavor> (note the single ':') resolves to the inline class
 C<Module::Package::PluginName::flavor>, within the module
 C<Module::Package::PluginName>. Module::Package::PluginName::flavor must be a
 subclass of L<Module::Package::Plugin>.
 
-C<%options> means whatever follows on the command. These values are passed
-directly to the constructor of Module::Package::PluginName::flavor.
+Optional key/value pairs can follow the Plugin specification. They are used to
+pass information to the plugin. See Plugin docs for more details.
 
 If C<:flavor> is omitted, the class Module::Package::PluginName is
 used. The idea is that you can create a single module with many different
@@ -172,8 +174,8 @@ L<Module::Package::Plugin>. These are a set of common plugin classes that you
 can use.
 
 If C<PluginName:flavor> is omitted altogether, it is the same as saying
-'Plugin:basic'. Note that the constructor of Module::Package::Plugin::basic
-takes no arguments.
+'Plugin:basic'. Note that you need to specify the ':basic' plugin if you want
+to also pass it options.
 
 =head1 STATUS
 

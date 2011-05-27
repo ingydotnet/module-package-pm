@@ -109,6 +109,10 @@ Otherwise, please notify the author of this error.
 # Find and load the author side plugin:
 sub _load_plugin {
     my ($self, $spec) = @_;
+    my $version = '';
+    if ($spec =~ s/\s+(\S+)\s*//) {
+        $version = $1;
+    }
     my ($module, $plugin) =
         not(defined $spec) ? ('Plugin', "Plugin::basic") :
         ($spec =~ /^\w(\w|::)*$/) ? ($spec, $spec) :
@@ -117,7 +121,7 @@ sub _load_plugin {
         die "$spec is invalid";
     $module = "Module::Package::$module";
     $plugin = "Module::Package::$plugin";
-    eval "require $module; 1" or die $@;
+    eval "use $module $version (); 1" or die $@;
     return $plugin->new();
 }
 

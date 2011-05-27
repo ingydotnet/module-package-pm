@@ -32,6 +32,52 @@ DESCRIPTION
     same time, fixing many of the problems that people have had with
     Module::Install (and other module frameworks) over the years.
 
+PROPAGANDA
+    Module::Install took Makefile.PL authoring from a black art to a small
+    set of powerful and reusable instructions. It allowed packaging gurus to
+    take their fancy tricks and make them into one liners for the rest of
+    us.
+
+    As the number of plugins has grown over the years, using Module::Install
+    has itself become a bit of a black art. It's become hard to know all the
+    latest tricks, put them in the correct order, and make sure you always
+    use the correct sets for your various Perl modules.
+
+    Added to this is the fact that there are a few problems in
+    Module::Install design and general usage that are hard to fix and deploy
+    with certainty that it will work in all cases.
+
+    This is where Module::Package steps in. Module::Package is the next
+    logical step in Makefile.PL authoring. It allows gurus to create well
+    tested sets of Module::Install directives, and lets the rest of us use
+    Makefile.PLs that are one line long. For example:
+
+        use inc::Module::Package 'Catalyst:widget';
+
+    could be the one line Makefile.PL for a Catalyst widget (whatever that
+    is) module distribution. Assuming someone create a module called
+    Module::Package::Catalyst, with an inline class called
+    Module::Package::Catalyst::widget that inherited from
+    Module::Package::Plugin.
+
+    Module::Package is pragmatic. Even though you can do everything in one
+    line, you are still able to make any Module::Install calls as usual.
+    Also you can pass parameters to the Module::Package plugin.
+
+        use inc::Module::Package 'Catalyst:widget',
+            deps_list => 0,
+            some_cataylst_thing => '...';
+
+        # All Module::Install plugins still work!
+        requires 'Some::Module' => 3.14;
+
+    This allows Module::Package::Catalyst to be configurable, even on the
+    properties like "deps_list" that are inherited from
+    Module::Package::Plugin.
+
+    The point here is that with Module::Package, module packaging just got a
+    whole lot more powerful and simple. A rare combination!
+
 FEATURES
     Module::Package has many advantages over vanilla Module::Install.
 
@@ -64,23 +110,27 @@ FEATURES
     groups.
 
     Module::Package has object oriented plugins whose main purpose is to
-    create these groups.
+    create these groups. They inherit and can define options for the user to
+    tweak how they will operate.
 
 USAGE
     The basic anatomy of a Makefile.PL call to Module::Package is:
 
-        use inc::Module::Package PluginName:flavor %options;
+        use inc::Module::Package <version> 'PluginName:flavor <version>',
+            $option1 => $value1;
 
     The "inc::Module::Package" part uses the Module::Install "inc"
-    bootstrapping trick.
+    bootstrapping trick. An optional version can be used for both
+    Module::Package and the Plugin.
 
     "PluginName:flavor" (note the single ':') resolves to the inline class
     "Module::Package::PluginName::flavor", within the module
     "Module::Package::PluginName". Module::Package::PluginName::flavor must
     be a subclass of Module::Package::Plugin.
 
-    %options means whatever follows on the command. These values are passed
-    directly to the constructor of Module::Package::PluginName::flavor.
+    Optional key/value pairs can follow the Plugin specification. They are
+    used to pass information to the plugin. See Plugin docs for more
+    details.
 
     If ":flavor" is omitted, the class Module::Package::PluginName is used.
     The idea is that you can create a single module with many different
@@ -91,8 +141,8 @@ USAGE
     you can use.
 
     If "PluginName:flavor" is omitted altogether, it is the same as saying
-    'Plugin:basic'. Note that the constructor of
-    Module::Package::Plugin::basic takes no arguments.
+    'Plugin:basic'. Note that you need to specify the ':basic' plugin if you
+    want to also pass it options.
 
 STATUS
     This is still an early release. You should probably avoid it for now.
