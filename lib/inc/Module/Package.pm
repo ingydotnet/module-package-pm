@@ -1,4 +1,4 @@
-##
+#
 # name:      inc::Module::Package
 # abstract:  Module::Package Bootstrapper
 # author:    Ingy döt Net <ingy@ingy.net>
@@ -8,9 +8,10 @@
 package inc::Module::Package;
 
 BEGIN {
-    $VERSION = '0.14';
+    $inc::Module::Package::VERSION = '0.15';
+    unshift @INC, 'inc' unless $INC[0] eq 'inc';
     package main;
-    use Module::Package 0.14 ();
+    use Module::Package 0.15 ();
     die "Module::Package Bootstrapping Error"
         unless $Module::Package::VERSION eq $inc::Module::Package::VERSION;
 }

@@ -149,6 +149,13 @@ STATUS
     That said, quite a few modules are using this in the wild. Caveat
     author.
 
+SEE ALSO
+    *   Module::Package::Plugin
+
+    *   Module::Install::Package
+
+    *   Module::Package::Tutorial
+
 AUTHOR
     Ingy döt Net <ingy@cpan.org>
 

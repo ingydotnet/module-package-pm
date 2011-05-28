@@ -1,14 +1,16 @@
 == To Do
 
-- Set up a cpan-testers sandbox
-- use lib abspath t/lib lib
+x use lib abspath t/lib lib
+
+- Dep on M:I 1.01
 - sort out $POD and $PM usage
   - make $main::POD overloaded variable
 - sort out all_from usage
   - don't pass in default value from Ingy:modern
+- write Module::Package::Tutorial
+
+- Set up a cpan-testers sandbox
 - review cpan-testers status on new modules
 - Test on Strawberry Perl
   - Test install on win32
   - Test dev on win32
-- write Module::Package::Tutorial
-- Rerelease modules :\

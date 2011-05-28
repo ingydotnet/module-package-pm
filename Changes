@@ -1,4 +1,9 @@
 ---
+version: 0.15
+date:    Sun May 29 00:07:13 EST 2011
+changes:
+- Another fix to try to get a stable first release.
+---
 version: 0.14
 date:    Sat May 28 14:55:50 EST 2011
 changes:

@@ -4,13 +4,17 @@
 # author:    Ingy döt Net <ingy@cpan.org>
 # license:   perl
 # copyright: 2011
+# see:
+# - Module::Package::Plugin
+# - Module::Install::Package
+# - Module::Package::Tutorial
 
 package Module::Package;
 use 5.005;
 use strict;
 
 BEGIN {
-    $Module::Package::VERSION = '0.14';
+    $Module::Package::VERSION = '0.15';
     $inc::Module::Package::VERSION ||= $Module::Package::VERSION;
     @inc::Module::Package::ISA = __PACKAGE__;
 }

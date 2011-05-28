@@ -13,7 +13,7 @@ use strict;
 use Module::Install::Base;
 use vars qw'@ISA $VERSION';
 @ISA = 'Module::Install::Base';
-$VERSION = '0.14';
+$VERSION = '0.15';
 
 #-----------------------------------------------------------------------------#
 # We allow the author to specify key/value options after the plugin. These
@@ -38,6 +38,13 @@ my $default_options = {
 # Module::Install plugin namespace. These are only intended to be called from
 # Module::Package.
 #-----------------------------------------------------------------------------#
+
+# XXX CRAZY HACK!!
+# This is here to try to get us out of 0.11 hell...
+sub pkg {
+    my $self = shift;
+    $self->module_package_internals_init($@);
+}
 
 # Module::Package starts off life as a normal call to this Module::Install
 # plugin directive:
