@@ -8,9 +8,9 @@
 package inc::Module::Package;
 
 BEGIN {
-    $VERSION = '0.12';
+    $VERSION = '0.14';
     package main;
-    use Module::Package 0.12 ();
+    use Module::Package 0.14 ();
     die "Module::Package Bootstrapping Error"
         unless $Module::Package::VERSION eq $inc::Module::Package::VERSION;
 }

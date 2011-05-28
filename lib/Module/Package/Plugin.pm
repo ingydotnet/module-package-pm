@@ -13,7 +13,7 @@ use Module::Install::ManifestSkip 0.15;
 use IO::All 0.41;
 use File::Find 0 ();
 
-our $VERSION = '0.12';
+our $VERSION = '0.14';
 
 has mi => (is => 'rw');
 has options => (

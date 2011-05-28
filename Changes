@@ -1,4 +1,9 @@
 ---
+version: 0.14
+date:    Sat May 28 14:55:50 EST 2011
+changes:
+- Fixed a terrible showstopper bootstrapping bug
+---
 version: 0.12
 date:    Sat May 28 04:11:28 EST 2011
 changes:

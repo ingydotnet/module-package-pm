@@ -1,14 +1,14 @@
 == To Do
-+ Get old stuff working
-+ Use Makefile.PL __END__ for deps
-  + use 'author_requires' for deps
 
-+ META.yml picks up 5.005 instead of 5.008003
-  - fix all_from etc
-
-
-- Move package-pkg/perl package-pkg/perl/package
-- make $main::POD overloaded variable
+- Set up a cpan-testers sandbox
+- use lib abspath t/lib lib
+- sort out $POD and $PM usage
+  - make $main::POD overloaded variable
+- sort out all_from usage
+  - don't pass in default value from Ingy:modern
+- review cpan-testers status on new modules
 - Test on Strawberry Perl
   - Test install on win32
   - Test dev on win32
+- write Module::Package::Tutorial
+- Rerelease modules :\

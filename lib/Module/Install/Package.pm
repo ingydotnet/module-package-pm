@@ -13,7 +13,7 @@ use strict;
 use Module::Install::Base;
 use vars qw'@ISA $VERSION';
 @ISA = 'Module::Install::Base';
-$VERSION = '0.12';
+$VERSION = '0.14';
 
 #-----------------------------------------------------------------------------#
 # We allow the author to specify key/value options after the plugin. These

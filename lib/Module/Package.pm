@@ -9,7 +9,11 @@ package Module::Package;
 use 5.005;
 use strict;
 
-$Module::Package::VERSION = '0.12';
+BEGIN {
+    $Module::Package::VERSION = '0.14';
+    $inc::Module::Package::VERSION ||= $Module::Package::VERSION;
+    @inc::Module::Package::ISA = __PACKAGE__;
+}
 
 sub import {
     eval "use inc::Module::Install 1.01 (); 1" or die $@;
