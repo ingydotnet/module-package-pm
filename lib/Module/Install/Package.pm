@@ -122,8 +122,10 @@ Otherwise, please notify the author of this error.
 sub _load_plugin {
     my ($self, $spec) = @_;
     my $version = '';
+    $Module::Package::plugin_version = 0;
     if ($spec =~ s/\s+(\S+)\s*//) {
         $version = $1;
+        $Module::Package::plugin_version = $version;
     }
     my ($module, $plugin) =
         not(defined $spec) ? ('Plugin', "Plugin::basic") :

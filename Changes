@@ -9,6 +9,7 @@ changes:
 - Made a better version check
 - Added Module::Install 1.01 requirement
 - Added requires_from to options
+- Added $AUTHOR_ONLY support
 ---
 version: 0.15
 date:    Sun May 29 00:07:13 EST 2011
