@@ -258,7 +258,15 @@ sub strip_extra_comments {
 # names. They are generally safer (and simpler) to call than the real ones.
 # They should almost always be chosen by Module::Package::Plugin subclasses.
 #-----------------------------------------------------------------------------#
-sub all_from { my $self = shift; $self->mi->_all_from(@_) }
+sub post_all_from {
+    my $self = shift;
+    push @{$self->{post_all_from} ||= []}, @_;
+}
+sub all_from {
+    my $self = shift;
+    $self->mi->_all_from(@_);
+    $_->() for @{$self->{post_all_from} || []};
+}
 sub requires_from { my $self = shift; $self->mi->_requires_from(@_) }
 sub install_bin { my $self = shift; $self->mi->_install_bin(@_) }
 sub WriteAll { my $self = shift; $self->mi->_WriteAll(@_) }

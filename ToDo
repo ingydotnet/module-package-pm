@@ -1,10 +1,5 @@
 == To Do
 
-- Reduce the deps_list
-  - Take out the Plugin deps
-  - Take out the Plugin if Version is used
-  - Take out Module::Package if it is all that is left
-
 x use lib abspath t/lib lib
 
 - Set up a cpan-testers sandbox
