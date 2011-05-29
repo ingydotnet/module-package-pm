@@ -4,14 +4,16 @@
 # author:    Ingy döt Net <ingy@ingy.net>
 # license:   perl
 # copyright: 2011
+# see:
+# - Module::Package
 
 package inc::Module::Package;
 
 BEGIN {
-    $inc::Module::Package::VERSION = '0.15';
+    $inc::Module::Package::VERSION = '0.16';
     unshift @INC, 'inc' unless $INC[0] eq 'inc';
     package main;
-    use Module::Package 0.15 ();
+    use Module::Package 0.16 ();
     die "Module::Package Bootstrapping Error"
         unless $Module::Package::VERSION eq $inc::Module::Package::VERSION;
 }

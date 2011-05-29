@@ -55,7 +55,7 @@ PROPAGANDA
         use inc::Module::Package 'Catalyst:widget';
 
     could be the one line Makefile.PL for a Catalyst widget (whatever that
-    is) module distribution. Assuming someone create a module called
+    is) module distribution. Assuming someone creates a module called
     Module::Package::Catalyst, with an inline class called
     Module::Package::Catalyst::widget that inherited from
     Module::Package::Plugin.
@@ -101,7 +101,7 @@ FEATURES
     they come from.
 
     Many people have realized this problem, and worked around it in various
-    unfortunate ways. Module::Package manages this problem for you.
+    suboptimal ways. Module::Package manages this problem for you.
 
   Feature Grouping and Reuse
     Module::Install has lots of plugins. Although it is possible with plain
@@ -110,8 +110,9 @@ FEATURES
     groups.
 
     Module::Package has object oriented plugins whose main purpose is to
-    create these groups. They inherit and can define options for the user to
-    tweak how they will operate.
+    create these groups. They inherit base functionality, subclass it to
+    their design goals and can define options for the user to tweak how they
+    will operate.
 
 USAGE
     The basic anatomy of a Makefile.PL call to Module::Package is:
@@ -145,9 +146,9 @@ USAGE
     want to also pass it options.
 
 STATUS
-    This is still an early release. You should probably avoid it for now.
-    That said, quite a few modules are using this in the wild. Caveat
-    author.
+    This is still an early release. We are still shaking out the bugs. You
+    might want to hold off for a bit longer before using Module::Package for
+    important modules.
 
 SEE ALSO
     *   Module::Package::Plugin

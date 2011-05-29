@@ -1,13 +1,11 @@
 == To Do
 
-x use lib abspath t/lib lib
+- Reduce the deps_list
+  - Take out the Plugin deps
+  - Take out the Plugin if Version is used
+  - Take out Module::Package if it is all that is left
 
-- Dep on M:I 1.01
-- sort out $POD and $PM usage
-  - make $main::POD overloaded variable
-- sort out all_from usage
-  - don't pass in default value from Ingy:modern
-- write Module::Package::Tutorial
+x use lib abspath t/lib lib
 
 - Set up a cpan-testers sandbox
 - review cpan-testers status on new modules

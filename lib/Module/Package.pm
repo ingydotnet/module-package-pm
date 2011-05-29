@@ -14,7 +14,7 @@ use 5.005;
 use strict;
 
 BEGIN {
-    $Module::Package::VERSION = '0.15';
+    $Module::Package::VERSION = '0.16';
     $inc::Module::Package::VERSION ||= $Module::Package::VERSION;
     @inc::Module::Package::ISA = __PACKAGE__;
 }
@@ -93,7 +93,7 @@ one line long. For example:
     use inc::Module::Package 'Catalyst:widget';
 
 could be the one line Makefile.PL for a Catalyst widget (whatever that is)
-module distribution. Assuming someone create a module called
+module distribution. Assuming someone creates a module called
 Module::Package::Catalyst, with an inline class called
 Module::Package::Catalyst::widget that inherited from
 L<Module::Package::Plugin>.
@@ -142,7 +142,7 @@ modules you have used. That's because the Makefile.PL only requires the
 function names, not the module names that they come from.
 
 Many people have realized this problem, and worked around it in various
-unfortunate ways. Module::Package manages this problem for you.
+suboptimal ways. Module::Package manages this problem for you.
 
 =head2 Feature Grouping and Reuse
 
@@ -151,8 +151,8 @@ Module::Install, nobody seems to make plugins that group other plugins. This
 also might introduce subtle problems of using groups with other groups.
 
 Module::Package has object oriented plugins whose main purpose is to create
-these groups. They inherit and can define options for the user to tweak how
-they will operate.
+these groups. They inherit base functionality, subclass it to their design
+goals and can define options for the user to tweak how they will operate.
 
 =head1 USAGE
 
@@ -187,5 +187,6 @@ to also pass it options.
 
 =head1 STATUS
 
-This is still an early release. You should probably avoid it for now. That
-said, quite a few modules are using this in the wild. Caveat author.
+This is still an early release. We are still shaking out the bugs. You might
+want to hold off for a bit longer before using Module::Package for important
+modules.

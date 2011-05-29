@@ -4,27 +4,30 @@
 # author:    Ingy döt Net <ingy@cpan.org>
 # license:   perl
 # copyright: 2011
+# see:
+# - Module::Package
+# - Module::Package::Tutorial
 
 package Module::Package::Plugin;
 use 5.008003;
 use Moo 0.009007;
-use Module::Install::AuthorRequires 0.02;
-use Module::Install::ManifestSkip 0.15;
+use Module::Install 1.01 ();
+use Module::Install::AuthorRequires 0.02 ();
+use Module::Install::ManifestSkip 0.15 ();
 use IO::All 0.41;
 use File::Find 0 ();
 
-our $VERSION = '0.15';
+our $VERSION = '0.16';
 
 has mi => (is => 'rw');
 has options => (
     is => 'rw',
     lazy => 1,
-    builder => '_build_options',
+    default => sub {
+        my ($self) = @_;
+        $self->mi->package_options;
+    },
 );
-sub _build_options {
-    my ($self) = @_;
-    $self->mi->package_options;
-}
 
 #-----------------------------------------------------------------------------#
 # These 3 functions (initial, main and final) make up the Module::Package
@@ -34,7 +37,6 @@ sub _build_options {
 sub initial {
     my ($self) = @_;
     # Load pkg/conf.yaml if it exists
-    $self->mi->_guess_pm;
     $self->eval_deps_list;
 }
 
@@ -48,26 +50,24 @@ sub main {
 
 sub final {
     my ($self) = @_;
+
     $self->manifest_skip;
-    $self->mi->_install_bin;
+
+    # NOTE These must match Module::Install::Package::_final.
+    $self->all_from;
+    $self->requires_from;
+    $self->install_bin;
     $self->WriteAll;
+
     $self->write_deps_list;
 }
 
 #-----------------------------------------------------------------------------#
 # This is where the useful methods (that author plugins can invoke) live.
 #-----------------------------------------------------------------------------#
-sub pod_or_pm_file {
-    # XXX $main::POD should be overloaded to always return the best thing.
-    if (! $main::POD) {
-        (my $pod = $main::PM) =~ s/\.pm$/.pod/ or die;
-        $main::POD = $pod if -e $pod;
-    }
-    return $main::POD || $main::PM;
-}
-sub pm_file {
-    return $main::PM;
-}
+sub pm_file { return "$main::PM" }
+sub pod_file { return "$main::POD" }
+sub pod_or_pm_file { return "$main::POD" || "$main::PM" }
 
 my $deps_list_file = 'pkg/deps_list.pl';
 sub eval_deps_list {
@@ -206,7 +206,7 @@ author_requires '$module' => '$version';
 # We add author only M::I plugins, so they don't get distributed.
 sub manifest_skip {
     my ($self) = @_;
-    return if not $self->options->{manifest_skip};
+    return unless $self->options->{manifest_skip};
     $self->mi->manifest_skip;
 
     # XXX Hardcoded author list for now. Need to change this.
@@ -258,26 +258,15 @@ sub strip_extra_comments {
 # names. They are generally safer (and simpler) to call than the real ones.
 # They should almost always be chosen by Module::Package::Plugin subclasses.
 #-----------------------------------------------------------------------------#
-my $WriteAll = 0;
-sub WriteAll {
-    return if $WriteAll++;
-    my ($self) = @_;
-    $self->_replicate;
-    $self->mi->WriteAll;
-}
-
-my $all_from = 0;
-sub all_from {
-    return if $all_from++;
-    my $self = shift;
-    my $file = shift || $main::PM;
-    $self->mi->all_from($file);
-}
+sub all_from { my $self = shift; $self->mi->_all_from(@_) }
+sub requires_from { my $self = shift; $self->mi->_requires_from(@_) }
+sub install_bin { my $self = shift; $self->mi->_install_bin(@_) }
+sub WriteAll { my $self = shift; $self->mi->_WriteAll(@_) }
 
 #-----------------------------------------------------------------------------#
-# These are ugly housekeeping functions.
+# This gets called very last on the author side.
 #-----------------------------------------------------------------------------#
-sub _replicate {
+sub replicate_module_package {
     my $target_file = 'inc/Module/Package.pm';
     if (-e 'inc/.author' and not -e $target_file) {
         my $source_file = $INC{'Module/Package.pm'}
@@ -286,17 +275,22 @@ sub _replicate {
     }
 }
 
-sub _version_check {
+# TODO Check all versions possible here.
+sub version_check {
     my ($self, $version) = @_;
-    die <<"..." unless $version == $VERSION;
+    die <<"..."
 
 Error! Something has gone awry:
-    Module::Package version=$version is using 
+    inc::Module::Package version=$inc::Module::Package::VERSION
+    Module::Package version=$::Module::Package::VERSION
+    Module::Install::Package version=$version
     Module::Package::Plugin version=$VERSION
-If you are the author of this module, try upgrading Module::Package.
-Otherwise, please notify the author of this error.
+Try upgrading Module::Package.
 
 ...
+    unless $version == $VERSION and
+        $version == $Module::Package::VERSION and
+        $version == $inc::Module::Package::VERSION;
 }
 
 package Module::Package::Plugin::basic;
@@ -305,7 +299,8 @@ extends 'Module::Package::Plugin';
 
 sub main {
     my ($self) = @_;
-    $self->all_from;
+    $self->all_from
+        unless $self->mi->name;
 }
 
 1;
@@ -322,7 +317,6 @@ sub main {
         my ($self) = @_;
         $self->mi->some_module_install_author_plugin;
         $self->mi->other_author_plugin;
-        $self->all_from;
     }
 
     1;
@@ -331,18 +325,55 @@ sub main {
 
 This module is the base class for Module::Package plugins. 
 
-... much more doc coming soon...
+=head1 EXAMPLE
 
-For now take a look at the L<Module::Package::Ingy> module.
+Take a look at the L<Module::Package::Ingy> module, for a decent starting
+point example. That plugin module is actually used to package Module::Package
+itself.
+
+=head1 API
+
+To create a Module::Package plugin you need to subclass
+Module::Package::Plugin and override the C<main> method, and possibly other
+things. This section describes how that works.
+
+Makefile.PL processing happens in the following order:
+
+    - 'use inc::Module::Package...' is invoked
+    - $plugin->initial is called
+    - BEGIN blocks in Makefile.PL are run
+    - $plugin->main is called
+    - The body of Makefile.PL is run
+    - $plugin->final is called
+
+=head2 initial
+
+This method is call during the processing of 'use inc::Module::Package'. You
+probably don't need to subclass it. If you do you probably want to call the
+SUPER method.
+
+It runs the deps_list, if any and guesses the primary modules file path.
+
+=head2 main
+
+This is the method you must override. Do all the things you want. You can call
+C<all_from>, if you need to get sequencing right, otherwise it gets called by
+final(). Don't call C<WriteAll>, it get's called automatically in final().
+
+=head2 final
+
+This does all the things after the entire Makefile.PL body has run. You
+probably don't need to override it.
 
 =head1 OPTIONS
 
 The following options are available for use from the Makefile.PL:
 
     use Module::Package 'Foo:bar',
-        deps_list => 0,
-        install_bin => 0,
-        manifest_skip => 0;
+        deps_list => 0|1,
+        install_bin => 0|1,
+        manifest_skip => 0|1,
+        requires_from => 0|1;
 
 These options can be used by any subclass of this module.
 
@@ -374,3 +405,11 @@ This option will generate a sane MANIFEST.SKIP for you and delete it again
 when you run C<make clean>. You can add your own skips in the file called
 C<pkg/manifest.skip>. You almost certainly want this option on. Set to 0 if
 you are weird.
+
+=head2 requires_from
+
+Default is 1.
+
+This option will attempt to find all the requirements from the primary module.
+If you make any of your own requires or requires_from calls, this option will
+do nothing.

@@ -4,6 +4,8 @@
 # author:    Ingy döt Net <ingy@cpan.org>
 # license:   perl
 # copyright: 2011
+# see:
+# - Module::Package
 
 # This module contains the Module::Package logic that must be available to
 # both the Author and the End User. Author-only logic goes in a
@@ -13,24 +15,31 @@ use strict;
 use Module::Install::Base;
 use vars qw'@ISA $VERSION';
 @ISA = 'Module::Install::Base';
-$VERSION = '0.15';
+$VERSION = '0.16';
+
+#-----------------------------------------------------------------------------#
+# XXX CRAZY HACK!!
+# This is here to try to get us out of Module-Package-0.11 cpantesters hell...
+# Remove this when the situation has blown over.
+sub pkg {
+    *inc::Module::Package::VERSION = sub { $VERSION };
+    my $self = shift;
+    $self->module_package_internals_init($@);
+}
 
 #-----------------------------------------------------------------------------#
 # We allow the author to specify key/value options after the plugin. These
 # options need to be available both at author time and install time.
 #-----------------------------------------------------------------------------#
-# We won't use any non-core modules like Moo, here. (This runs on user side)
-# Generate an accessor for command line options:
+# OO accessor for command line options:
 sub package_options {
-    my $self = shift;
-    return ($self->{package_options} = shift) if @_;
-    return $self->{package_options};
-}
+    @_>1?($_[0]->{package_options}=$_[1]):$_[0]->{package_options}}
 
 my $default_options = {
     deps_list => 1,
     install_bin => 1,
     manifest_skip => 1,
+    requires_from => 1,
 };
 
 #-----------------------------------------------------------------------------#
@@ -38,13 +47,6 @@ my $default_options = {
 # Module::Install plugin namespace. These are only intended to be called from
 # Module::Package.
 #-----------------------------------------------------------------------------#
-
-# XXX CRAZY HACK!!
-# This is here to try to get us out of 0.11 hell...
-sub pkg {
-    my $self = shift;
-    $self->module_package_internals_init($@);
-}
 
 # Module::Package starts off life as a normal call to this Module::Install
 # plugin directive:
@@ -60,8 +62,8 @@ sub module_package_internals_init {
 
     if ($module_install_plugin->is_admin) {
         $module_package_plugin = $self->_load_plugin($plugin_spec);
-        $module_package_plugin->_version_check($VERSION);
         $module_package_plugin->mi($module_install_plugin);
+        $module_package_plugin->version_check($VERSION);
     }
     # NOTE - This is the point in time where the body of Makefile.PL runs...
     return;
@@ -71,8 +73,8 @@ sub module_package_internals_init {
         return if $Module::Package::ERROR;
         eval {
             if ($module_install_plugin->is_admin) {
-                $module_package_plugin->initial;
-                $module_package_plugin->main;
+                $module_package_plugin->initial();
+                $module_package_plugin->main();
             }
             else {
                 $module_install_plugin->_initial();
@@ -93,7 +95,10 @@ sub module_package_internals_init {
         return unless $module_install_plugin;
         return if $Module::Package::ERROR;
         $module_package_plugin
-            ? $module_package_plugin->final
+            ? do {
+                $module_package_plugin->final;
+                $module_package_plugin->replicate_module_package;
+            }
             : $module_install_plugin->_final;
     }
 }
@@ -145,44 +150,42 @@ sub _main {
     my ($self) = @_;
 }
 
-# TODO Need to review this critical part. Make sure it is in parity with every
-# author side run!
+# NOTE These must match Module::Package::Plugin::final.
 sub _final {
     my ($self) = @_;
-    $self->all_from($main::PM)
-        unless $self->name;
-    $self->requires_from($main::PM);
+    $self->_all_from;
+    $self->_requires_from;
     $self->_install_bin;
-    $self->WriteAll;
+    $self->_WriteAll;
 }
 
 #-----------------------------------------------------------------------------#
 # This section is where all the useful code bits go. These bits are needed by
 # both Author and User side runs.
 #-----------------------------------------------------------------------------#
-# Take a guess at the primary .pm and .pod files for 'all_from', and friends.
-# Put them in global vars in the main:: namespace.
-sub _guess_pm {
-    if (not $main::PM) {
-        require File::Find;
-        $main::PM = '';
-        my $high = 999999;
-        File::Find::find(sub {
-            return unless /\.pm$/;
-            my $name = $File::Find::name;
-            my $num = ($name =~ s!/+!/!g);
-            if ($num < $high) {
-                $high = $num;
-                $main::PM = $name;
-            }
-        }, 'lib');
-    }
-    (my $pod = $main::PM) =~ s/\.pm/.pod/ or die;
-    $main::POD = -e $pod ? $pod : '';
+
+my $all_from = 0;
+sub _all_from {
+    my $self = shift;
+    return if $all_from++;
+    return if $self->name;
+    my $file = shift || "$main::PM" or die "all_from has no file";
+    $self->all_from($file);
 }
 
+my $requires_from = 0;
+sub _requires_from {
+    my $self = shift;
+    return if $requires_from++;
+    return if $self->requires and @{$self->requires};
+    my $file = shift || "$main::PM" or die "requires_from has no file";
+    $self->requires_from($main::PM)
+}
+
+my $install_bin = 0;
 sub _install_bin {
-    my ($self) = @_;
+    my $self = shift;
+    return if $install_bin++;
     return unless $self->package_options->{install_bin};
     return unless -d 'bin';
     my @bin;
@@ -192,6 +195,50 @@ sub _install_bin {
     }, 'bin');
     $self->install_script($_) for @bin;
 }
+
+my $WriteAll = 0;
+sub _WriteAll {
+    my $self = shift;
+    return if $WriteAll++;
+    $self->WriteAll(@_);
+}
+
+#-----------------------------------------------------------------------------#
+# Take a guess at the primary .pm and .pod files for 'all_from', and friends.
+# Put them in global magical vars in the main:: namespace.
+#-----------------------------------------------------------------------------#
+package Module::Package::PM;
+use overload '""' => sub {
+    $_[0]->guess_pm unless @{$_[0]};
+    return $_[0]->[0];
+};
+sub set { $_[0]->[0] = $_[1] }
+sub guess_pm {
+    my $self = shift;
+    require File::Find;
+    my $pm = '';
+    my $high = 999999;
+    File::Find::find(sub {
+        return unless /\.pm$/;
+        my $name = $File::Find::name;
+        my $num = ($name =~ s!/+!/!g);
+        if ($num < $high) {
+            $high = $num;
+            $pm = $name;
+        }
+    }, 'lib');
+    $self->set($pm);
+}
+$main::PM = bless [], __PACKAGE__;
+
+package Module::Package::POD;
+use overload '""' => sub {
+    return $_[0]->[0] if @{$_[0]};
+    (my $pod = "$main::PM") =~ s/\.pm/.pod/ or die;
+    return -e $pod ? $pod : '';
+};
+sub set { $_[0][0] = $_[1] }
+$main::POD = bless [], __PACKAGE__;
 
 1;
 
