@@ -15,7 +15,7 @@ use strict;
 use Module::Install::Base;
 use vars qw'@ISA $VERSION';
 @ISA = 'Module::Install::Base';
-$VERSION = '0.16';
+$VERSION = '0.17';
 
 #-----------------------------------------------------------------------------#
 # XXX CRAZY HACK!!
@@ -145,7 +145,6 @@ sub _load_plugin {
 #-----------------------------------------------------------------------------#
 sub _initial {
     my ($self) = @_;
-    $self->_guess_pm;
 }
 
 sub _main {

@@ -10,10 +10,10 @@
 package inc::Module::Package;
 
 BEGIN {
-    $inc::Module::Package::VERSION = '0.16';
+    $inc::Module::Package::VERSION = '0.17';
     unshift @INC, 'inc' unless $INC[0] eq 'inc';
     package main;
-    use Module::Package 0.16 ();
+    use Module::Package 0.17 ();
     die "Module::Package Bootstrapping Error"
         unless $Module::Package::VERSION eq $inc::Module::Package::VERSION;
 }
