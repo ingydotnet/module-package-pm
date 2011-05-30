@@ -13,11 +13,11 @@ use 5.008003;
 use Moo 0.009007;
 use Module::Install 1.01 ();
 use Module::Install::AuthorRequires 0.02 ();
-use Module::Install::ManifestSkip 0.15 ();
+use Module::Install::ManifestSkip 0.17 ();
 use IO::All 0.41;
 use File::Find 0 ();
 
-our $VERSION = '0.17';
+our $VERSION = '0.18';
 
 has mi => (is => 'rw');
 has options => (
@@ -260,9 +260,17 @@ sub all_from {
     $self->mi->_all_from(@_);
     $_->() for @{$self->{post_all_from} || []};
 }
+sub post_WriteAll {
+    my $self = shift;
+    push @{$self->{post_WriteAll} ||= []}, @_;
+}
+sub WriteAll {
+    my $self = shift;
+    $self->mi->_WriteAll(@_);
+    $_->() for @{$self->{post_WriteAll} || []};
+}
 sub requires_from { my $self = shift; $self->mi->_requires_from(@_) }
 sub install_bin { my $self = shift; $self->mi->_install_bin(@_) }
-sub WriteAll { my $self = shift; $self->mi->_WriteAll(@_) }
 
 #-----------------------------------------------------------------------------#
 # Other housekeeping stuffs

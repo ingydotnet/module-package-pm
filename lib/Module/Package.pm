@@ -14,7 +14,7 @@ use 5.005;
 use strict;
 
 BEGIN {
-    $Module::Package::VERSION = '0.17';
+    $Module::Package::VERSION = '0.18';
     $inc::Module::Package::VERSION ||= $Module::Package::VERSION;
     @inc::Module::Package::ISA = __PACKAGE__;
 }
