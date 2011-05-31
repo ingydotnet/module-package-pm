@@ -18,6 +18,7 @@ ok -e "$local/lib/perl5/inc/Module/Package.pm",
     'Install works on user end';
 if (-e "$local/lib/perl5/inc/Module/Package.pm") {
     run "rm -fr $local";
+    run "rm $tarball";
 }
 
 #-- Run this for finer tuned debugging
