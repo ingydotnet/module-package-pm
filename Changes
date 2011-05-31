@@ -1,4 +1,10 @@
 ---
+version: 0.19
+date:    
+changes:
+- Hopefully fix the non-upgrable bootstrapping bugs.
+- Added xt test to assure that it works.
+---
 version: 0.18
 date:    Mon May 30 20:35:50 EST 2011
 changes:

@@ -9,20 +9,37 @@
 
 package inc::Module::Package;
 
+# Use BEGIN so unshift runs before use.
 BEGIN {
-    $inc::Module::Package::VERSION = '0.18';
+    # This version is here in case of emergencies.
+    $inc::Module::Package::VERSION = '0.19';
+
+    # Make sure we pick up the local modules on user install.
     unshift @INC, 'inc' unless $INC[0] eq 'inc';
-    package main;
-    use Module::Package 0.18 ();
-    die "Module::Package Bootstrapping Error"
-        unless $Module::Package::VERSION eq $inc::Module::Package::VERSION;
 }
 
+# Bare block contains the 'main' scope.
+{
+    # Pretend we are a Makefile.PL. Module::Install wants this.
+    package main;
+
+    # Load the real Module::Package.
+    use Module::Package ();
+}
+
+# Tell Module::Package to begin the magic.
 sub import {
     my $class = shift;
     Module::Package->import(@_);
+
+    # Make sure we got the correct Module::Package.
+# TODO: Need code review on this first. Might cause more harm than good.
+#     die "Module::Package Bootstrapping Error"
+#         unless $INC{'Module/Package.pm'} =~ /^inc/
+#             or -e 'inc/.author';
 }
 
+# Be true to your perl.
 1;
 
 =head1 SYNOPSIS

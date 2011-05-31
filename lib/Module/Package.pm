@@ -14,7 +14,7 @@ use 5.005;
 use strict;
 
 BEGIN {
-    $Module::Package::VERSION = '0.18';
+    $Module::Package::VERSION = '0.19';
     $inc::Module::Package::VERSION ||= $Module::Package::VERSION;
     @inc::Module::Package::ISA = __PACKAGE__;
 }
@@ -55,8 +55,8 @@ or one of these invocations:
     # With Module::Package::Catalyst::common inline plugin class
     use inc::Module::Package 'Catalyst:common';
 
-    # Pass options to the Module::Package::Ingy::special constructor
-    use inc::Module::Package 'Ingy:special',
+    # Pass options to the Module::Package::Ingy::modern constructor
+    use inc::Module::Package 'Ingy:modern',
         option1 => 'value1',
         option2 => 'value2';
 
@@ -158,17 +158,18 @@ goals and can define options for the user to tweak how they will operate.
 
 The basic anatomy of a Makefile.PL call to Module::Package is:
 
-    use inc::Module::Package <version> 'PluginName:flavor <version>',
+    use inc::Module::Package 'PluginName:flavor <version>',
         $option1 => $value1;
 
 The C<inc::Module::Package> part uses the Module::Install C<inc> bootstrapping
-trick. An optional version can be used for both Module::Package and the
-Plugin. 
+trick.
 
 C<PluginName:flavor> (note the single ':') resolves to the inline class
 C<Module::Package::PluginName::flavor>, within the module
 C<Module::Package::PluginName>. Module::Package::PluginName::flavor must be a
 subclass of L<Module::Package::Plugin>.
+
+An optional version can be used after the plugin name.
 
 Optional key/value pairs can follow the Plugin specification. They are used to
 pass information to the plugin. See Plugin docs for more details.
