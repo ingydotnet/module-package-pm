@@ -14,6 +14,15 @@ BEGIN {
     # This version is here in case of emergencies.
     $inc::Module::Package::VERSION = '0.19';
 
+    # Borrowed from inc::Module::Install...
+    my $author = $^O eq 'VMS' ? './inc/_author' : './inc/.author';
+    # Deleting the author's inc/ dir happens in Module::Install anyway,
+    # but doing it here prevents a subtle Module::Package bug.
+    if (-d $author) {
+        require File::Path;
+        File::Path::rmtree('inc');
+    }
+
     # Make sure we pick up the local modules on user install.
     unshift @INC, 'inc' unless $INC[0] eq 'inc';
 }
