@@ -216,6 +216,9 @@ sub manifest_skip {
     }
 
     io('MANIFEST.SKIP')->append(join '', @skips);
+    if (-e 'pkg/manifest.skip') {
+        io('MANIFEST.SKIP')->append(io('pkg/manifest.skip')->all);
+    }
 
     $self->mi->clean_files('MANIFEST MANIFEST.SKIP');
 }
