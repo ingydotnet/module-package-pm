@@ -15,7 +15,7 @@ use strict;
 use Module::Install::Base;
 use vars qw'@ISA $VERSION';
 @ISA = 'Module::Install::Base';
-$VERSION = '0.19';
+$VERSION = '0.20';
 
 #-----------------------------------------------------------------------------#
 # XXX BOOTBUGHACK
@@ -38,6 +38,7 @@ sub package_options {
 my $default_options = {
     deps_list => 1,
     install_bin => 1,
+    install_share => 1,
     manifest_skip => 1,
     requires_from => 1,
 };
@@ -122,6 +123,7 @@ Otherwise, please notify the author of this error.
 # Find and load the author side plugin:
 sub _load_plugin {
     my ($self, $spec) = @_;
+    $spec ||= '';
     my $version = '';
     $Module::Package::plugin_version = 0;
     if ($spec =~ s/\s+(\S+)\s*//) {
@@ -129,7 +131,7 @@ sub _load_plugin {
         $Module::Package::plugin_version = $version;
     }
     my ($module, $plugin) =
-        not(defined $spec) ? ('Plugin', "Plugin::basic") :
+        not($spec) ? ('Plugin', "Plugin::basic") :
         ($spec =~ /^\w(\w|::)*$/) ? ($spec, $spec) :
         ($spec =~ /^:(\w+)$/) ? ('Plugin', "Plugin::$1") :
         ($spec =~ /^(\S*\w):(\w+)$/) ? ($1, "$1::$2") :
@@ -158,6 +160,7 @@ sub _final {
     $self->_all_from;
     $self->_requires_from;
     $self->_install_bin;
+    $self->_install_share;
     $self->_WriteAll;
 }
 
@@ -196,6 +199,15 @@ sub _install_bin {
         push @bin, $File::Find::name;
     }, 'bin');
     $self->install_script($_) for @bin;
+}
+
+my $install_share = 0;
+sub _install_share {
+    my $self = shift;
+    return if $install_share++;
+    return unless $self->package_options->{install_share};
+    return unless -d 'share';
+    $self->install_share;
 }
 
 my $WriteAll = 0;

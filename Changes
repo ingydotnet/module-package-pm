@@ -1,8 +1,10 @@
 ---
 version: 0.20
-date:    
+date:    Sun Jun  5 02:32:35 EST 2011
 changes:
 - Add pkg/manifest.skip to MANIFEST.SKIP
+- Add a debugging dump for mystery M:I 1.00 situation.
+- Support install_share.
 ---
 version: 0.19
 date:    Tue May 31 20:25:05 EST 2011

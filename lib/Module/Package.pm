@@ -14,15 +14,15 @@ use 5.005;
 use strict;
 
 BEGIN {
-    $Module::Package::VERSION = '0.19';
+    $Module::Package::VERSION = '0.20';
     $inc::Module::Package::VERSION ||= $Module::Package::VERSION;
     @inc::Module::Package::ISA = __PACKAGE__;
 }
 
 sub import {
-    eval "use inc::Module::Install 1.01 (); 1" or die $@;
-
     my $class = shift;
+    eval "use inc::Module::Install 1.01 (); 1" or $class->error($@);
+
     package main;
     inc::Module::Install->import();
     eval {
@@ -32,6 +32,28 @@ sub import {
     if ($@) {
         $Module::Package::ERROR = $@;
         die $@;
+    }
+}
+
+sub error {
+    my ($class, $error) = @_;
+    if (-e 'inc' and not -e 'inc/.author') {
+        require Data::Dumper;
+        $Data::Dumper::Sortkeys = 1;
+        my $dump1 = Data::Dumper::Dumper(\%INC);
+        my $dump2 = Data::Dumper::Dumper(\@INC);
+        die <<"...";
+This should not have happened. Hopefully this dump will explain the problem:
+
+Error: $error
+%INC:
+$dump1
+\@INC:
+$dump2
+...
+    }
+    else {
+        die $error;
     }
 }
 

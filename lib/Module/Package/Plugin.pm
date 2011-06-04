@@ -10,14 +10,14 @@
 
 package Module::Package::Plugin;
 use 5.008003;
-use Moo 0.009007;
+use Moo 0.009008;
 use Module::Install 1.01 ();
 use Module::Install::AuthorRequires 0.02 ();
-use Module::Install::ManifestSkip 0.17 ();
+use Module::Install::ManifestSkip 0.19 ();
 use IO::All 0.41;
 use File::Find 0 ();
 
-our $VERSION = '0.19';
+our $VERSION = '0.20';
 
 has mi => (is => 'rw');
 has options => (
@@ -57,6 +57,7 @@ sub final {
     $self->all_from;
     $self->requires_from;
     $self->install_bin;
+    $self->install_share;
     $self->WriteAll;
 
     $self->write_deps_list;
@@ -274,6 +275,7 @@ sub WriteAll {
 }
 sub requires_from { my $self = shift; $self->mi->_requires_from(@_) }
 sub install_bin { my $self = shift; $self->mi->_install_bin(@_) }
+sub install_share { my $self = shift; $self->mi->_install_share(@_) }
 
 #-----------------------------------------------------------------------------#
 # Other housekeeping stuffs
@@ -401,6 +403,7 @@ The following options are available for use from the Makefile.PL:
     use Module::Package 'Foo:bar',
         deps_list => 0|1,
         install_bin => 0|1,
+        install_share => 0|1,
         manifest_skip => 0|1,
         requires_from => 0|1;
 
@@ -425,6 +428,13 @@ Default is 1.
 
 All files in a C<bin/> directory will be installed. It will call the
 C<install_script> plugin for you. Set this option to 0 to disable it.
+
+=head2 install_share
+
+Default is 1.
+
+All files in a C<share/> directory will be installed. It will call the
+C<install_share> plugin for you. Set this option to 0 to disable it.
 
 =head2 manifest_skip
 
