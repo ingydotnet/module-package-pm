@@ -12,10 +12,16 @@ package inc::Module::Package;
 # Use BEGIN so unshift runs before use.
 BEGIN {
     # This version is here in case of emergencies.
-    $inc::Module::Package::VERSION = '0.20';
+    $inc::Module::Package::VERSION = '0.21';
 
     # Borrowed from inc::Module::Install...
     my $author = $^O eq 'VMS' ? './inc/_author' : './inc/.author';
+
+    # I am doing this because inc::Module::Install does it, and we don't ever
+    # call that.
+    $Module::Install::AUTHOR = 1
+        if -d $author or not(-d 'inc');
+
     # Deleting the author's inc/ dir happens in Module::Install anyway,
     # but doing it here prevents a subtle Module::Package bug.
     if (-d $author) {

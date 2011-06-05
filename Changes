@@ -1,4 +1,10 @@
 ---
+version: 0.21
+date:    Mon Jun  6 02:10:28 EST 2011
+changes:
+- audreyt++ found the elusive bootstrapping bug.
+- Allow $PM and $POD to be preset.
+---
 version: 0.20
 date:    Sun Jun  5 02:32:35 EST 2011
 changes:
