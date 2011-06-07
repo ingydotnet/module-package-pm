@@ -1,8 +1,10 @@
 ---
 version: 0.22
-date:    
+date:    Tue Jun  7 17:37:16 EST 2011
 changes:
+- Fix new bug on clean perl installs.
 - Since we no longer load inc::Module::Install, we need to put 'inc' on @INC.
+- Add =encoding to Tutorial
 ---
 version: 0.21
 date:    Mon Jun  6 02:10:28 EST 2011
