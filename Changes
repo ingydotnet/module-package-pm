@@ -1,4 +1,9 @@
 ---
+version: 0.22
+date:    
+changes:
+- Since we no longer load inc::Module::Install, we need to put 'inc' on @INC.
+---
 version: 0.21
 date:    Mon Jun  6 02:10:28 EST 2011
 changes:
