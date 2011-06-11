@@ -17,7 +17,7 @@ use Module::Install::ManifestSkip 0.19 ();
 use IO::All 0.41;
 use File::Find 0 ();
 
-our $VERSION = '0.22';
+our $VERSION = '0.23';
 
 has mi => (is => 'rw');
 has options => (
@@ -308,9 +308,21 @@ Try upgrading Module::Package.
         $version == $inc::Module::Package::VERSION;
 }
 
+# This is a set of known AUTHOR_ONLY plugins. Until authors set this variable
+# themselves, do it here to make sure these get added to the MANIFEST.SKIP and
+# thus do not end up in the distributions, causing bloat.
 sub set_author_only_defaults {
     my @known_author_only = qw(
-        AckXXX AuthorRequires ManifestSkip ReadmeFromPod Stardoc TestML
+        AckXXX
+        AuthorRequires
+        AutoLicense
+        GitHubMeta
+        ManifestSkip
+        ReadmeFromPod
+        Repository
+        Stardoc
+        TestBase
+        TestML
         VersionCheck
     );
     for (@known_author_only) {

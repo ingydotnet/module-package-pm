@@ -15,7 +15,7 @@ use strict;
 use Module::Install::Base;
 use vars qw'@ISA $VERSION';
 @ISA = 'Module::Install::Base';
-$VERSION = '0.22';
+$VERSION = '0.23';
 
 #-----------------------------------------------------------------------------#
 # XXX BOOTBUGHACK
@@ -182,7 +182,7 @@ my $requires_from = 0;
 sub _requires_from {
     my $self = shift;
     return if $requires_from++;
-    return if $self->requires and @{$self->requires};
+    return unless $self->package_options->{requires_from};
     my $file = shift || "$main::PM" or die "requires_from has no file";
     $self->requires_from($main::PM)
 }

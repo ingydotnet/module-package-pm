@@ -1,4 +1,10 @@
 ---
+version: 0.23
+date:    Sun Jun 12 03:48:23 EST 2011
+changes:
+- Allow requires_from after requires
+- Add modules to @known_author_only
+---
 version: 0.22
 date:    Tue Jun  7 17:37:16 EST 2011
 changes:

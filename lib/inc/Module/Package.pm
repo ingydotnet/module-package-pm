@@ -1,4 +1,4 @@
-#
+##
 # name:      inc::Module::Package
 # abstract:  Module::Package Bootstrapper
 # author:    Ingy döt Net <ingy@ingy.net>
@@ -12,13 +12,12 @@ package inc::Module::Package;
 # Use BEGIN so unshift runs before use.
 BEGIN {
     # This version is here in case of emergencies.
-    $inc::Module::Package::VERSION = '0.22';
+    $inc::Module::Package::VERSION = '0.23';
 
     # Borrowed from inc::Module::Install...
     my $author = $^O eq 'VMS' ? './inc/_author' : './inc/.author';
 
-    # I am doing this because inc::Module::Install does it, and we don't ever
-    # call that.
+    # Do this because inc::Module::Install does it. We don't ever call that.
     $Module::Install::AUTHOR = 1
         if -d $author or not(-d 'inc');
 
@@ -68,5 +67,3 @@ In you C<Makefile.PL>:
 This is the L<Module::Package> bootstrapping module.  It works something like
 L<inc::Module::Install>.  This bootstrap module should only be loaded in an
 author environment.
-
-See L<Module::Package> for more information.
