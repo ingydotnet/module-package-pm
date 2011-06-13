@@ -1,4 +1,9 @@
 ---
+version: 0.24
+date:    Mon Jun 13 18:12:51 EST 2011
+changes:
+- Allow for unicode package names
+---
 version: 0.23
 date:    Sun Jun 12 03:48:23 EST 2011
 changes:

@@ -8,16 +8,19 @@
 # - Module::Package
 # - Module::Package::Tutorial
 
-package Module::Package::Plugin;
 use 5.008003;
+use utf8;
+
+package Module::Package::Plugin;
 use Moo 0.009008;
+
+our $VERSION = '0.24';
+
 use Module::Install 1.01 ();
 use Module::Install::AuthorRequires 0.02 ();
 use Module::Install::ManifestSkip 0.19 ();
 use IO::All 0.41;
 use File::Find 0 ();
-
-our $VERSION = '0.23';
 
 has mi => (is => 'rw');
 has options => (
@@ -185,7 +188,8 @@ author_requires 'Module::Package' => '$Module::Package::VERSION';
 
 sub skip_deps {
     my ($self, $file) = @_;
-    $file =~ s/::[a-z].*//;
+    $file =~ s/^(.*)::[^A-Z].*$/$1/
+        or die "Can't grok paackage '$file'";
     $file =~ s!::!/!g;
     $file .= '.pm';
     $file = $INC{$file} or return ();
@@ -319,6 +323,7 @@ sub set_author_only_defaults {
         GitHubMeta
         ManifestSkip
         ReadmeFromPod
+        ReadmeMarkdownFromPod
         Repository
         Stardoc
         TestBase
