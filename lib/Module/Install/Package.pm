@@ -15,7 +15,7 @@ use strict;
 use Module::Install::Base;
 use vars qw'@ISA $VERSION';
 @ISA = 'Module::Install::Base';
-$VERSION = '0.24';
+$VERSION = '0.25';
 
 #-----------------------------------------------------------------------------#
 # XXX BOOTBUGHACK
@@ -228,19 +228,33 @@ use overload '""' => sub {
 };
 sub set { $_[0]->[0] = $_[1] }
 sub guess_pm {
-    my $self = shift;
-    require File::Find;
     my $pm = '';
-    my $high = 999999;
-    File::Find::find(sub {
-        return unless /\.pm$/;
-        my $name = $File::Find::name;
-        my $num = ($name =~ s!/+!/!g);
-        if ($num < $high) {
-            $high = $num;
-            $pm = $name;
-        }
-    }, 'lib');
+    my $self = shift;
+    if (-e 'META.yml') {
+        open META, 'META.yml' or die "Can't open 'META.yml' for input:\n$!";
+        my $meta = do { local $/; <META> };
+        close META;
+        $meta =~ /^module_name: (\S+)$/m
+            or die "Can't get module_name from META.yml";
+        $pm = $1;
+        $pm =~ s!::!/!g;
+        $pm = "lib/$pm.pm";
+    }
+    else {
+        require File::Find;
+        my @array = ();
+        File::Find::find(sub {
+            return unless /\.pm$/;
+            my $name = $File::Find::name;
+            my $num = ($name =~ s!/+!/!g);
+            my $ary = $array[$num] ||= [];
+            push @$ary, $name;
+        }, 'lib');
+        shift @array while @array and not defined $array[0];
+        die "Can't guess main module" unless @array;
+        (($pm) = sort @{$array[0]}) or
+            die "Can't guess main module";
+    }
     $self->set($pm);
 }
 $main::PM = bless [$main::PM ? ($main::PM) : ()], __PACKAGE__;

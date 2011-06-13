@@ -1,4 +1,9 @@
 ---
+version: 0.25
+date:    Tue Jun 14 00:10:30 EST 2011
+changes:
+- Only guess the module name on the author side
+---
 version: 0.24
 date:    Mon Jun 13 18:12:51 EST 2011
 changes:

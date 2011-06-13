@@ -14,7 +14,7 @@ use utf8;
 package Module::Package::Plugin;
 use Moo 0.009008;
 
-our $VERSION = '0.24';
+our $VERSION = '0.25';
 
 use Module::Install 1.01 ();
 use Module::Install::AuthorRequires 0.02 ();
