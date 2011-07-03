@@ -14,13 +14,14 @@ use utf8;
 package Module::Package::Plugin;
 use Moo 0.009008;
 
-our $VERSION = '0.25';
+our $VERSION = '0.26';
 
+use Cwd 0 ();
+use File::Find 0 ();
 use Module::Install 1.01 ();
 use Module::Install::AuthorRequires 0.02 ();
 use Module::Install::ManifestSkip 0.19 ();
 use IO::All 0.41;
-use File::Find 0 ();
 
 has mi => (is => 'rw');
 has options => (
@@ -140,6 +141,7 @@ Note: Can't find a place to write deps list, and deps_list option is true.
 
 sub generate_deps_list {
     my ($self) = @_;
+    my $base = Cwd::cwd();
     my %skip = map {($_, 1)}
         qw(Module::Package Module::Install),
         $self->skip_deps(ref($self)),
@@ -154,6 +156,7 @@ sub generate_deps_list {
         return unless -f $_ and $_ =~ /\.pm$/;
         my $module = $File::Find::name;
         $module =~ s!inc[\/\\](.*)\.pm$!$1!;
+        return if -e "$base/lib/$module.pm";
         $module =~ s!/+!::!g;
         return if $skip{$module};
         return if $module =~ /^Test::Base::/;
@@ -247,6 +250,13 @@ sub check_use_testml {
     my ($self) = @_;
     if (-e 't/testml') {
         $self->mi->use_testml;
+    }
+}
+
+sub check_test_common {
+    my ($self) = @_;
+    if (-e 't/common.yaml') {
+        $self->mi->test_common_update;
     }
 }
 

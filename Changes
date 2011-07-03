@@ -1,4 +1,9 @@
 ---
+version: 0.26
+date:    Sun Jul  3 19:54:14 EDT 2011
+changes:
+- Support Test::Common updating
+---
 version: 0.25
 date:    Tue Jun 14 00:10:30 EST 2011
 changes:
