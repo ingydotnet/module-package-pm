@@ -1,4 +1,4 @@
-use inc::Module::Package 'Ingy:modern 0.13';
+use inc::Module::Package 'Ingy:modern 0.14';
 
 # The default module 'lib/Module/Package.pm' has to be very strict
 # and minimal, so we get much of the package info from here:

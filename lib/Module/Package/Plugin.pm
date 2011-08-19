@@ -14,7 +14,7 @@ use utf8;
 package Module::Package::Plugin;
 use Moo 0.009008;
 
-our $VERSION = '0.26';
+our $VERSION = '0.27';
 
 use Cwd 0 ();
 use File::Find 0 ();
@@ -135,6 +135,8 @@ sub write_deps_list {
 Note: Can't find a place to write deps list, and deps_list option is true.
       touch $deps_list_file or add __END__ to Makefile.PL.
       See 'deps_list' in Module::Package::Plugin documentation.
+Deps List:
+${$_ = $text; chomp; s/^/    /mg; \$_}
 ...
     }
 }
@@ -160,6 +162,7 @@ sub generate_deps_list {
         $module =~ s!/+!::!g;
         return if $skip{$module};
         return if $module =~ /^Test::Base::/;
+        return if $module =~ /^Pegex::/;
         push @inc, $module;
     }, 'inc');
     if (grep /^Module::Install::TestBase$/, @inc) {
@@ -257,6 +260,23 @@ sub check_test_common {
     my ($self) = @_;
     if (-e 't/common.yaml') {
         $self->mi->test_common_update;
+    }
+}
+
+sub check_use_gloom {
+    my ($self) = @_;
+    my @files;
+    File::Find::find(sub {
+        return unless -f $_ and $_ =~ /\.pm$/;
+        return if $File::Find::name eq 'lib/Gloom.pm';
+        return if $File::Find::name eq 'lib/Module/Install/Gloom.pm';
+        return unless io($_)->getline =~ /\bGloom\b/;
+        push @files, $File::Find::name;
+    }, 'lib');
+    for my $file (@files) {
+        $file =~ s/^lib\/(.*)\.pm$/$1/ or die;
+        $file =~ s/\//::/g;
+        $self->mi->use_gloom($file);
     }
 }
 
