@@ -15,7 +15,7 @@ use strict;
 use Module::Install::Base;
 use vars qw'@ISA $VERSION';
 @ISA = 'Module::Install::Base';
-$VERSION = '0.27';
+$VERSION = '0.28';
 
 #-----------------------------------------------------------------------------#
 # XXX BOOTBUGHACK

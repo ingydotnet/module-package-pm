@@ -14,7 +14,7 @@ use utf8;
 package Module::Package::Plugin;
 use Moo 0.009008;
 
-our $VERSION = '0.27';
+our $VERSION = '0.28';
 
 use Cwd 0 ();
 use File::Find 0 ();
@@ -153,6 +153,12 @@ sub generate_deps_list {
             ManifestSkip Metadata Package PAR Run Scripts Share Win32 With
             WriteAll 
         ));
+    my @skip;
+    for my $module (keys %skip) {
+        if ($skip{"Module::Install::$module"}) {
+            push @skip, "${module}::";
+        }
+    }
     my @inc = ();
     File::Find::find(sub {
         return unless -f $_ and $_ =~ /\.pm$/;
@@ -161,8 +167,9 @@ sub generate_deps_list {
         return if -e "$base/lib/$module.pm";
         $module =~ s!/+!::!g;
         return if $skip{$module};
-        return if $module =~ /^Test::Base::/;
-        return if $module =~ /^Pegex::/;
+        for my $prefix (@skip) {
+            return if $module =~ /^\Q$prefix\E/;
+        }
         push @inc, $module;
     }, 'inc');
     if (grep /^Module::Install::TestBase$/, @inc) {
@@ -251,7 +258,13 @@ sub check_use_test_base {
 
 sub check_use_testml {
     my ($self) = @_;
-    if (-e 't/testml') {
+    my $found = 0;
+    File::Find::find(sub {
+        return unless -f $_ and $_ =~ /\.t$/;
+        return unless io($_)->all =~ /\buse TestML\b/;
+        $found = 1;
+    }, 't');
+    if ($found or -e 't/testml') {
         $self->mi->use_testml;
     }
 }
