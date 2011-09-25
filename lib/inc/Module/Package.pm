@@ -12,7 +12,7 @@ package inc::Module::Package;
 # Use BEGIN so unshift runs before use.
 BEGIN {
     # This version is here in case of emergencies.
-    $inc::Module::Package::VERSION = '0.28';
+    $inc::Module::Package::VERSION = '0.29';
 
     # Borrowed from inc::Module::Install...
     my $author = $^O eq 'VMS' ? './inc/_author' : './inc/.author';
