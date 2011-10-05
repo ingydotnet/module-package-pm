@@ -1,4 +1,9 @@
 ---
+version: 0.30
+date:    
+changes:
+- Patch from tobyink++
+---
 version: 0.29
 date:    Sun Sep 25 22:21:20 CEST 2011
 changes:
