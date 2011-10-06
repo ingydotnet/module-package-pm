@@ -14,7 +14,7 @@ use utf8;
 package Module::Package::Plugin;
 use Moo 0.009008;
 
-our $VERSION = '0.29';
+our $VERSION = '0.30';
 
 use Cwd 0 ();
 use File::Find 0 ();
