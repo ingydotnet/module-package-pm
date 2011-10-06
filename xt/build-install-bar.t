@@ -5,6 +5,8 @@ use xt::Test;
 die "Use devel-local" unless 
     $ENV{PERL5LIB} =~ /module-package-pm/;
 
+run "rm -f xt/Bar1/Bar1-0.001.tar.gz";
+
 my $local = abs_path 'xt/local';
 delete $ENV{PERL_CPANM_OPT};
 chdir 'xt/Bar1' or die;
@@ -33,3 +35,6 @@ ok $found, "Dist plugin worked";
 
 run "make purge";
 run "rm -fr $local";
+(my $dir = $local) =~ s{local/?$}{Bar1};
+run "rm -f $dir/Bar1-0.001.tar.gz";
+run "mv $dir/MANIFEST.bak $dir/MANIFEST";
